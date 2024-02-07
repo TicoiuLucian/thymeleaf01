@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ro.itschool.controller.model.AuthorDTO;
 import ro.itschool.controller.model.JokeDTO;
 import ro.itschool.entity.Joke;
+import ro.itschool.service.AuthorService;
 import ro.itschool.service.JokeService;
 
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.Objects;
 public class JokeController {
 
   private final JokeService jokeService;
+  private final AuthorService authorService;
 
   //------------Add new joke to database--------------------------------
   @GetMapping(value = "/add")
@@ -42,8 +45,9 @@ public class JokeController {
   }
 
   @RequestMapping(value = "/edit")
-  public String editAndSaveEditedJoke(@ModelAttribute(value = "joke") JokeDTO jokeDTO) {
+  public String editAndSaveEditedJoke(@ModelAttribute(value = "joke") JokeDTO jokeDTO, AuthorDTO authorDTO) {
     jokeService.save(jokeDTO);
+    authorService.save(authorDTO);
     return "redirect:/joke/all";
   }
   //----------------------------------------------------------------
