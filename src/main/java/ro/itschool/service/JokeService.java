@@ -16,4 +16,6 @@ public interface JokeService {
   void getJokes(final int count);
 
   Optional<JokeDTO> findById(Integer id);
+
+  List<JokeDTO> findByKeyword(String searchQuery);
 }

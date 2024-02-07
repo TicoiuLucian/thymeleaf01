@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Add Joke</title>
+
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css} "/>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.5.1/css/all.css} "/>
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        .full-height {
+            height: 75%;
+        }
+        .content-container {
+            transform: scale(1.5);
+        }
+    </style>
+</head>
+
+<body data-bs-theme="dark">
+    <div class="d-flex justify-content-center align-items-center full-height">
+        <div class="container-fluid py-3 content-container">
+            <h2 class="text-center"> Add a new joke </h2>
+            <form th:action="@{/jokes/add}" th:object="${joke}" method="post" class="mx-auto p-3 border rounded" style="max-width: 550px;">
+                <div class="form-group mb-3">
+                    <label for="setup" class="form-label">Setup</label>
+                    <input type="text" th:field="*{setup}" class="form-control" id="setup" placeholder="Enter setup"/>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="punchline" class="form-label">Punchline</label>
+                    <input type="text" th:field="*{punchline}" class="form-control" id="punchline" placeholder="Enter punchline"/>
+                </div>
+                <div class="form-group mb-4">
+                    <label for="author" class="form-label">Author</label>
+                    <select class="form-select" th:name="authorId" id="author" th:required="true">
+                        <option th:each="author : ${authors}"
+                                th:value="${author.id}"
+                                th:text="${author.firstName + ' ' + author.lastName}"
+                        ></option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/jokes/all}" class="btn btn-link text-decoration-none">Go back</a>
+                    <button type="submit" class="btn btn-outline-success d-flex align-items-baseline gap-1">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add joke</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
