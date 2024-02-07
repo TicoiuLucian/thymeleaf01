@@ -11,7 +11,9 @@ import ro.itschool.mapper.JokeMapper;
 import ro.itschool.repository.AuthorRepository;
 import ro.itschool.repository.JokeRepository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -25,12 +27,12 @@ public class JokeServiceImpl implements JokeService {
   private final RestTemplate restTemplate;
   private final ExecutorService executorService;
 
-  @Override
-  public List<JokeDTO> getJokes() {
-    return jokeRepository.findAll().stream()
-            .map(jokeMapper::entityToDTO)
-            .toList();
-  }
+//  @Override
+//  public List<JokeDTO> getJokes() {
+//    return jokeRepository.findAll().stream()
+//            .map(jokeMapper::entityToDTO)
+//            .toList();
+//  }
 
   @Override
   public void deleteJoke(final Integer id) {
@@ -91,9 +93,14 @@ public class JokeServiceImpl implements JokeService {
 
   @Override
   public List<JokeDTO> findByKeyword(String searchQuery) {
-    List<Joke> jokeSearchResults = jokeRepository.findByKeyword(searchQuery);
-      return jokeSearchResults.stream()
+    if (searchQuery == null) {
+      return jokeRepository.findAll().stream()
               .map(jokeMapper::entityToDTO)
               .toList();
+    }
+    List<Joke> jokeSearchResults = jokeRepository.findByKeyword(searchQuery);
+    return jokeSearchResults.stream()
+            .map(jokeMapper::entityToDTO)
+            .toList();
   }
 }

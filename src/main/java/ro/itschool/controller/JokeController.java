@@ -8,6 +8,7 @@ import ro.itschool.controller.model.AuthorDTO;
 import ro.itschool.controller.model.JokeDTO;
 import ro.itschool.service.AuthorService;
 import ro.itschool.service.JokeService;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,9 +29,9 @@ public class JokeController {
 
   // List all jokes
   @GetMapping("/all")
-  public String listJokes(Model model) {
-    List<JokeDTO> jokes = jokeService.getJokes();
-    model.addAttribute("jokesTotalList", Objects.requireNonNullElseGet(jokes, ArrayList::new));
+  public String listJokes(Model model, @RequestParam(required = false) String keyword) {
+    List<JokeDTO> jokes = jokeService.findByKeyword(keyword);
+    model.addAttribute("jokes", Objects.requireNonNullElseGet(jokes, ArrayList::new));
     return "jokes"; // maps to jokes.html
   }
 
@@ -42,33 +43,18 @@ public class JokeController {
     return "jokes-add"; // maps to jokes-add.html
   }
 
-  @GetMapping(value = "/search")
-  public String searchJokes(Model model, @RequestParam(required = false) String searchQuery) {
-    if (searchQuery != null) {
-      List<JokeDTO> searchResults = jokeService.findByKeyword(searchQuery.trim());
-      model.addAttribute("jokeSearchResults", searchResults);
-      model.addAttribute("searchPerformed", true);
-    } else {
-       return "redirect:/jokes/all";
-    }
-    model.addAttribute("searchQuery", searchQuery);
-    return "jokes";
-  }
-
-
   // Process the form for adding a new joke
   @PostMapping("/add")
   public String processAddJokeForm(
           @ModelAttribute("joke") JokeDTO jokeDTO,
           @RequestParam("authorId") Integer authorId
-  ) {
+                                  ) {
     AuthorDTO authorDTO = authorService.findById(authorId)
             .orElseThrow(() -> new IllegalArgumentException("Invalid Author ID: " + authorId));
     jokeDTO.setAuthor(authorDTO);
     jokeService.save(jokeDTO);
     return "redirect:/jokes/all";
   }
-
 
   // Show form to edit an existing joke
   @GetMapping(value = "/edit/{id}")
@@ -85,7 +71,7 @@ public class JokeController {
           @PathVariable Integer id,
           @ModelAttribute("joke") JokeDTO jokeDTO,
           @RequestParam("authorId") Integer authorId
-  ) {
+                                   ) {
     AuthorDTO authorDTO = authorService.findById(authorId)
             .orElseThrow(() -> new IllegalArgumentException("Invalid Author ID"));
     jokeDTO.setAuthor(authorDTO);

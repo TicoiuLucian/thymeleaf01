@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface JokeService {
 
-  List<JokeDTO> getJokes();
+//  List<JokeDTO> getJokes();
 
   void deleteJoke(Integer id);
 

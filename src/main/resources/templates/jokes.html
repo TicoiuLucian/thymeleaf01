@@ -12,10 +12,11 @@
 <div class="container py-5">
     <a th:href="@{/jokes/all}" class="text-decoration-none text-white py-2 fs-1">Jokes Table</a>
     <!-- Search form -->
-    <form th:action="@{/jokes/search}" method="get" class="mb-3">
+    <form th:action="@{/jokes/all}" method="get" class="mb-3">
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Search..." aria-label="search-input" aria-describedby="basic-addon1"
-                   name="searchQuery">
+            <input type="text" class="form-control" placeholder="Search..." aria-label="search-input"
+                   aria-describedby="basic-addon1"
+                   name="keyword">
             <div class="input-group-prepend">
                 <button class="btn btn-outline-secondary" type="submit">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -24,59 +25,42 @@
         </div>
     </form>
 
-    <!-- Basic Stats + Conditionally displaying the search results stats -->
-    <div th:if="${searchPerformed}" class="mx-1 my-3">
-        <div th:if="${not #lists.isEmpty(jokeSearchResults)} and ${searchQuery != null and searchQuery.trim() != ''}" class="mx-1 my-3">
-            <span th:text="${#lists.size(jokeSearchResults)} + ' result' + (${#lists.size(jokeSearchResults)} == 1 ? '' : 's') + ' for keyword \'' + ${searchQuery} + '\'' " class="fs-3"></span>
-        </div>
-        <div th:if="${not #lists.isEmpty(jokeSearchResults)} and ${searchQuery == null or searchQuery.trim() == ''}" class="mx-1 my-3">
-            <span>Total <span th:text="${#lists.size(jokeSearchResults)}"></span> joke<span th:text="${#lists.size(jokeSearchResults)} == 1 ? '' : 's'"></span> found</span>
-        </div>
-        <div th:unless="${not #lists.isEmpty(jokeSearchResults)}" class="mx-1 my-3">
-            <span th:if="${searchQuery != null and searchQuery.trim() != ''}">No result<span th:text="${searchQuery != null and searchQuery.trim() != '' && #lists.size(jokeSearchResults) == 0 ? 's' : ''}"></span> found for keyword '<span th:text="${searchQuery}"></span>'</span>
-            <span th:unless="${searchQuery != null and searchQuery.trim() != ''}">No search keyword provided.</span>
-        </div>
-    </div>
-
     <div class="table-responsive">
         <!-- Table accommodates both all jokes and filtered search results  -->
         <table class="table table-striped">
             <thead class="thead-dark">
             <!-- Show headers if jokes are present or no search was performed -->
-                <tr th:if="${jokeSearchResults != null and not #lists.isEmpty(jokeSearchResults)} or ${searchPerformed == null or searchPerformed == false}">
-                    <th class="col-xs-4">Id</th>
-                    <th>Setup</th>
-                    <th>Punchline</th>
-                    <th class="col-lg-2">Author</th>
-                    <th></th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th class="col-xs-4"> Id</th>
+                <th> Setup</th>
+                <th> Punchline</th>
+                <th class="col-lg-2">Author</th>
+                <th> Edit</th>
+                <th> Delete</th>
+            </tr>
             </thead>
             <tbody>
             <!-- Render appropriate list in table (all vs search results) -->
-                <tr th:each="joke : ${#lists.isEmpty(jokeSearchResults) ? jokesTotalList : jokeSearchResults}">
-                    <td><span th:text="${joke.id}"/></td>
-                    <td><span th:text="${joke.setup}"/></td>
-                    <td><span th:text="${joke.punchline}"/></td>
-                    <td><span th:text="${joke.author.firstName + ' ' + joke.author.lastName}"/></td>
-                    <td>
-                        <a class="fa-sharp fa-solid fa-pen-to-square icon-link icon-link-hover text-decoration-none"
-                           style="--bs-link-hover-color-rgb: 13,202,240;"
-                           th:href="@{'/jokes/edit/' + ${joke.id}}">
-                        </a>
-                    </td>
-                    <td>
-                        <a class="fa-solid fa-trash icon-link icon-link-hover text-decoration-none"
-                           style="--bs-link-hover-color-rgb: 255, 99, 71;"
-                           th:href="@{'/jokes/delete/' + ${joke.id}}">
-                        </a>
-                    </td>
-                </tr>
+            <tr th:each="joke : ${jokes}">
+                <td><span th:text="${joke.id}"/></td>
+                <td><span th:text="${joke.setup}"/></td>
+                <td><span th:text="${joke.punchline}"/></td>
+                <td><span th:text="${joke.author.firstName + ' ' + joke.author.lastName}"/></td>
+                <td>
+                    <a class="fa-sharp fa-solid fa-pen-to-square icon-link icon-link-hover text-decoration-none"
+                       style="--bs-link-hover-color-rgb: 13,202,240;"
+                       th:href="@{'/jokes/edit/' + ${joke.id}}">
+                    </a>
+                </td>
+                <td>
+                    <a class="fa-solid fa-trash icon-link icon-link-hover text-decoration-none"
+                       style="--bs-link-hover-color-rgb: 255, 99, 71;"
+                       th:href="@{'/jokes/delete/' + ${joke.id}}">
+                    </a>
+                </td>
+            </tr>
             </tbody>
         </table>
-        <div th:if="${searchPerformed == null or searchPerformed == false}" class="mx-1 my-3">
-            <span>Total <span th:text="${#lists.size(jokesTotalList)}">0</span> jokes</span>
-        </div>
     </div>
     <a class="btn btn-outline-success d-flex align-items-baseline gap-1" th:href="@{/jokes/add}">
         <i class="fa-solid fa-plus"></i>
